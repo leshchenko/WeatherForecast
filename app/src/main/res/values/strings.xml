@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Weather Forecast</string>
+    <string name="open_weather_map_key">210475a62f8486190ea75daac2348be9</string>
+    <string name="accuweather_key">yG0Tt2h8KyUlbOGF9OyXNjYUcefTyHrF</string>
+    <string name="dark_sky_key">e75a20d2cab932ccf5eaeebe69fd2b33</string>
+    <string name="location_permission_snackbar_text">Please grant location permission.</string>
+    <string name="location_permission_explanatory_text">Please grant the location permission to give us possibility to display weather forecast which will be the most appropriate for you.</string>
+    <string name="pay_attention">Please, pay attention</string>
+    <string name="dont_want_use_app">I don\'t want use such app</string>
+    <string name="turn_on_device_location">Please turn on  device location for the best result.</string>
+
 </resources>
