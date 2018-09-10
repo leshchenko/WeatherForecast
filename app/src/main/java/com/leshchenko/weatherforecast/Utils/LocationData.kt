@@ -11,10 +11,10 @@ import android.support.v4.app.ActivityCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
-import com.leshchenko.weatherforecast.Model.LocationResultCallback
+import com.leshchenko.weatherforecast.Model.Interfaces.LocationResultCallback
 import java.util.concurrent.TimeUnit
 
-class LocationLiveData @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
+class LocationData @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
 
 constructor(private val activity: Activity,
             private val locationResultCallback: LocationResultCallback) {
