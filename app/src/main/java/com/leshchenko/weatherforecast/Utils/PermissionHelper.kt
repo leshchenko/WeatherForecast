@@ -20,12 +20,15 @@ class PermissionHelper {
 
         const val LOCATION_PERMISSION_REQUEST_CODE = 1001
         const val LOCATION_PERMISSION = android.Manifest.permission.ACCESS_COARSE_LOCATION
+        const val FINE_LOCATION_PERMISSION = android.Manifest.permission.ACCESS_FINE_LOCATION
 
         fun isLocationPermissionGranted(context: Context) =
-                ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(context, FINE_LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED
+
 
         fun requestLocationPermission(activity: Activity) {
-            ActivityCompat.requestPermissions(activity, arrayOf(LOCATION_PERMISSION), LOCATION_PERMISSION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(activity, arrayOf(LOCATION_PERMISSION, FINE_LOCATION_PERMISSION), LOCATION_PERMISSION_REQUEST_CODE)
         }
 
         /**
