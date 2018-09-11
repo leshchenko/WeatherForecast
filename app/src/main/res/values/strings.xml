@@ -9,4 +9,7 @@
     <string name="dont_want_use_app">I don\'t want use such app</string>
     <string name="turn_on_device_location">Please turn on  device location for the best result.</string>
 
+    <string name="defining_location">Defining location</string>
+    <string name="requesting_weather">Requesting weather data</string>
+
 </resources>

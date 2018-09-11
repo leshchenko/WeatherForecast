@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
+import android.os.Looper
 import android.support.annotation.RequiresPermission
 import android.support.v4.app.ActivityCompat
 import com.google.android.gms.common.api.ResolvableApiException
@@ -67,8 +68,10 @@ constructor(private val activity: Activity,
     @SuppressLint("MissingPermission")
     private fun fetchLastKnownLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener {
-            lastLocation = it
-            locationResultCallback.transmitLocation(lastLocation)
+            it?.let {
+                lastLocation = it
+                locationResultCallback.transmitLocation(lastLocation)
+            }
         }
     }
 
@@ -82,13 +85,13 @@ constructor(private val activity: Activity,
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
 
         task.addOnSuccessListener { _ ->
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         }
 
         task.addOnFailureListener { exception ->
             when (exception) {
                 is ResolvableApiException -> {
-                    exception.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)
+                    locationResultCallback.resolvableApiExceptionHappened(exception)
                 }
                 else -> {
                     locationResultCallback.transmitLocation(null)

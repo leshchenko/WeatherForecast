@@ -1,12 +1,13 @@
 package com.leshchenko.weatherforecast.View
 
 import android.app.Activity
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
+import com.google.android.gms.common.api.ResolvableApiException
 import com.leshchenko.weatherforecast.Model.Interfaces.LocationResultCallback
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.LocationData
@@ -16,13 +17,18 @@ import com.leshchenko.weatherforecast.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), LocationResultCallback {
+    override fun resolvableApiExceptionHappened(exception: ResolvableApiException) {
+        viewModel.resolvableApiExceptionHappened = true
+        exception.startResolutionForResult(this, LocationData.REQUEST_CHECK_SETTINGS)
+    }
+
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
     }
 
     override fun transmitLocation(location: Location?) {
-        location ?: return
-        dataText.text = "Longitude => ${location.longitude},  latitude => ${location.latitude}"
+        viewModel.currentLocation = location
+        dataText.text = "Longitude => ${location?.longitude},  latitude => ${location?.latitude}"
     }
 
     val locationData: LocationData  by lazy {
@@ -34,18 +40,13 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         binding.viewModel = viewModel
         setContentView(binding.root)
-        checkLocationPermission()
-        getData.setOnClickListener {
-           viewModel.progressBarGroupVisibility.set(View.GONE)
-        }
-    }
-
-    private fun checkLocationPermission() {
-        if (PermissionHelper.isLocationPermissionGranted(baseContext)) {
-           viewModel.explanationGroupVisibility.set(View.VISIBLE)
-        } else {
+        viewModel.requestLocationPermissionEvent.observe(this, Observer {
             PermissionHelper.requestLocationPermission(this)
-        }
+        })
+        viewModel.requestLocationEvent.observe(this, Observer {
+            requestLocation()
+        })
+        checkLocationPermission()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         when (requestCode) {
             PermissionHelper.LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (PermissionHelper.isPermissionGranted(grantResults)) {
-                    locationData.getLocation()
+                    requestLocation()
                 } else {
                     PermissionHelper.displayExplanatorySnackBar(findViewById(android.R.id.content),
                             R.string.location_permission_snackbar_text, this)
@@ -69,10 +70,11 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
                 checkLocationPermission()
             }
             LocationData.REQUEST_CHECK_SETTINGS -> {
+                viewModel.resolvableApiExceptionHappened = false
                 if (resultCode == Activity.RESULT_CANCELED) {
-                    PermissionHelper.displayDeviceLocationExplanatoryDialog(this) { locationData.getLocation() }
+                    viewModel.displayDeviceLocationExplanation()
                 } else {
-                    locationData.getLocation()
+                    requestLocation()
                 }
             }
         }
@@ -81,5 +83,21 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
     override fun onDestroy() {
         super.onDestroy()
         locationData.onDisable()
+    }
+
+    private fun requestLocation() {
+        if (viewModel.resolvableApiExceptionHappened) {
+            return
+        }
+        viewModel.displayProgressBar()
+        locationData.getLocation()
+    }
+
+    private fun checkLocationPermission() {
+        if (PermissionHelper.isLocationPermissionGranted(baseContext)) {
+            requestLocation()
+        } else {
+            viewModel.displayLocationPermissionExplanation()
+        }
     }
 }
