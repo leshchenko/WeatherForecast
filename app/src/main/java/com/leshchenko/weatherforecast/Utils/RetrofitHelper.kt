@@ -1,5 +1,6 @@
 package com.leshchenko.weatherforecast.Utils
 
+import com.leshchenko.weatherforecast.Model.DarkSkyResponse
 import com.leshchenko.weatherforecast.Model.OpenWeatherResponse
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherService
 import okhttp3.OkHttpClient
@@ -29,16 +30,16 @@ class RetrofitHelper {
 
         }
 
-        fun requestOpenWeatherForecast(longitude: Float, latitude: Float): Response<OpenWeatherResponse> =
+        fun requestOpenWeatherForecast(longitude: Double, latitude: Double): Response<OpenWeatherResponse> =
                 retrofit.create(WeatherService::class.java).getOpenWeatherForecast(latitude, longitude).execute()
 
-        fun requestDarkSkyForecast(longitude: Float, latitude: Float): Response<String> {
+        fun requestDarkSkyForecast(longitude: Double, latitude: Double): Response<DarkSkyResponse> {
             val url = generateDarkSkyForecastUrl(longitude, latitude)
             return retrofit.create(WeatherService::class.java).getDarkSkyForecast(url).execute()
         }
 
         // From the DarkSky doc, url should follow the next template -  https://api.darksky.net/forecast/[key]/[latitude],[longitude]
-        private fun generateDarkSkyForecastUrl(longitude: Float, latitude: Float): String {
+        private fun generateDarkSkyForecastUrl(longitude: Double, latitude: Double): String {
             return "$DARK_SKY_API_ENDPOINT$DARK_SKY_API_KEY/$latitude,$longitude"
         }
     }

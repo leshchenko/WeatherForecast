@@ -13,6 +13,7 @@ import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.RetrofitHelper
 import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
+import com.leshchenko.weatherforecast.Utils.Utils
 import kotlinx.coroutines.experimental.launch
 import retrofit2.Response
 import java.util.*
@@ -30,10 +31,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var requestLocationEvent: SingleLiveEvent<Any> = SingleLiveEvent()
 
     var currentLocation: Location? = null
-        set(value) {
-            progressBarText.set(getString(R.string.requesting_weather))
-        }
 
+    fun setLocation(location: Location?) {
+        currentLocation = location
+        progressBarText.set(getString(R.string.requesting_weather))
+        requestWeather()
+    }
 
     private fun hideExplanationGroup() {
         explanationGroupVisibility.set(View.GONE)
@@ -75,9 +78,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         progressBarGroupVisibility.set(View.GONE)
     }
 
-    fun requestWeather() {
-        launch {
-            deliverResult(arrayListOf<Any>(RetrofitHelper.requestOpenWeatherForecast(42f, 39f)))
+    private fun requestWeather() {
+        currentLocation?.let {
+            launch {
+                deliverResult(arrayListOf<Any>(RetrofitHelper.requestOpenWeatherForecast(it.longitude, it.latitude),
+                        RetrofitHelper.requestDarkSkyForecast(it.longitude, it.latitude)))
+            }
         }
     }
 
@@ -100,7 +106,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private fun getWeatherData(item: Any): WeatherData {
         with(item as Response<*>) {
             if (item.body() is WeatherResponseInterface) {
-                return (item.body() as WeatherResponseInterface).getAverageWeatherForCurrentDay(Date(System.currentTimeMillis() / 1000))
+                return (item.body() as WeatherResponseInterface).getWeatherForCurrentDay(Date(Utils.currentTimeSeconds()))
             } else {
                 throw IllegalArgumentException("Item should be inherited from \"WeatherResponseInterface\" class")
             }

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
     }
 
     override fun transmitLocation(location: Location?) {
-        viewModel.currentLocation = location
+        viewModel.setLocation(location)
         dataText.text = "Longitude => ${location?.longitude},  latitude => ${location?.latitude}"
     }
 

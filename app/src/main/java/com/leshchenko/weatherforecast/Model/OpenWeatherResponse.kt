@@ -12,7 +12,7 @@ import java.util.*
 
 class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
 
-    override fun getAverageWeatherForCurrentDay(date: Date): WeatherData {
+    override fun getWeatherForCurrentDay(date: Date): WeatherData {
         return getAverageWeatherData(date)
     }
 
@@ -65,7 +65,8 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
     }
 
     private fun getExtendedWeatherData(data: Data): ExtendedWeatherData {
-        return ExtendedWeatherData(data.time, data.main.minTemperature, data.main.maxTemperature, getWeatherType(data),
+        val temperature = data.main.minTemperature + data.main.maxTemperature / 2
+        return ExtendedWeatherData(data.time, temperature, getWeatherType(data),
                 data.clouds.all, data.wind.speed, data.main.pressure, data.main.humidity)
     }
 }
