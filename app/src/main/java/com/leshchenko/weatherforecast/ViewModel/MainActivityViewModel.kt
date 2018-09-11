@@ -2,15 +2,29 @@ package com.leshchenko.weatherforecast.ViewModel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
+import android.databinding.ObservableField
+import android.databinding.ObservableInt
 import android.util.Log
+import android.view.View
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
+import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.RetrofitHelper
+import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
 import kotlinx.coroutines.experimental.launch
 import retrofit2.Response
 import java.util.*
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+    var progressBarGroupVisibility: ObservableInt = ObservableInt(View.GONE)
+    var explanationGroupVisibility:ObservableInt = ObservableInt(View.VISIBLE)
+    var explanationText:ObservableField<String> = ObservableField(application.getString(R.string.location_permission_explanatory_text))
+
+    var checkLocationPermissionEvent:SingleLiveEvent<Any> = SingleLiveEvent()
+
+    fun fulfilWishButtonClick(){
+        Log.d("zlo", "click")
+    }
     fun requestWeather() {
         launch {
 
