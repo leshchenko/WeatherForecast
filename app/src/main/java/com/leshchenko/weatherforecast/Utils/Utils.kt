@@ -1,6 +1,11 @@
 package com.leshchenko.weatherforecast.Utils
 
+import android.content.Context
 import java.util.*
+import android.net.NetworkInfo
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
+
 
 class Utils {
     companion object {
@@ -54,6 +59,12 @@ class Utils {
             calendar.time = Date(secondTimestampInSec * 1000)
             val secondHour = calendar.get(Calendar.HOUR_OF_DAY)
             return firstHour == secondHour
+        }
+
+        fun isOnline(context: Context): Boolean {
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val netInfo = cm.activeNetworkInfo
+            return netInfo != null && netInfo.isConnectedOrConnecting
         }
     }
 }

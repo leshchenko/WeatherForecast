@@ -24,6 +24,8 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
     var progressBarText: ObservableField<String> = ObservableField(getString(R.string.requesting_weather))
 
     var explanationGroupVisibility: ObservableInt = ObservableInt(View.VISIBLE)
+    var fulfilButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
+
     var explanationText: ObservableField<String> = ObservableField()
 
     var weatherVisibility: ObservableInt = ObservableInt(View.GONE)
@@ -36,6 +38,14 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
     var longitude: Double = 0.0
     var time = 0L
     val hourTimestamps: List<Long> = Utils.getHourTimestampsForForecast()
+
+    private fun displayNetworkError() {
+        hideProgressBar()
+        hideWeather()
+        explanationText.set(getString(R.string.network_error))
+        explanationGroupVisibility.set(View.VISIBLE)
+        fulfilButtonVisibility.set(View.VISIBLE)
+    }
 
     private fun displayWeather() {
         hideProgressBar()
@@ -50,6 +60,7 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
 
     private fun hideExplanationGroup() {
         explanationGroupVisibility.set(View.GONE)
+        fulfilButtonVisibility.set(View.GONE)
     }
 
     private fun displayErrorExplanation() {
@@ -57,7 +68,16 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
         hideWeather()
         explanationText.set(getString(R.string.error_explanation))
         explanationGroupVisibility.set(View.VISIBLE)
+        fulfilButtonVisibility.set(View.VISIBLE)
 
+    }
+
+    private fun displayNoWeather() {
+        hideWeather()
+        hideProgressBar()
+        explanationText.set(getString(R.string.no_weather))
+        fulfilButtonVisibility.set(View.GONE)
+        explanationGroupVisibility.set(View.VISIBLE)
     }
 
     private fun displayProgressBar() {
@@ -67,7 +87,7 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun fulfilWishButtonClick() {
-
+        requestWeather()
     }
 
     private fun hideProgressBar() {
@@ -76,14 +96,18 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
 
 
     fun requestWeather() {
-        launch {
-            if (weatherForecast.isNotEmpty()) {
-                displayWeather()
-            } else {
-                displayProgressBar()
-                deliverResult(arrayListOf<Any>(WeatherRepository.requestOpenWeatherForecast(longitude, latitude),
-                        WeatherRepository.requestDarkSkyForecastForDay(longitude, latitude, time)))
+        if (Utils.isOnline(getApplication())) {
+            launch {
+                if (weatherForecast.isNotEmpty()) {
+                    displayWeather()
+                } else {
+                    displayProgressBar()
+                    deliverResult(arrayListOf<Any>(WeatherRepository.requestOpenWeatherForecast(longitude, latitude),
+                            WeatherRepository.requestDarkSkyForecastForDay(longitude, latitude, time)))
+                }
             }
+        } else {
+            displayNetworkError()
         }
     }
 
@@ -95,8 +119,12 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
                 displayErrorExplanation()
             }
         }
-        mergeWeather()
-        displayWeather()
+        if (weatherForecast.isEmpty()) {
+            displayNoWeather()
+        } else {
+            mergeWeather()
+            displayWeather()
+        }
     }
 
     private fun mergeWeather() {

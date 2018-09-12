@@ -20,5 +20,7 @@
     <string name="humidity">Humidity %1$s percents</string>
     <string name="pressure">Pressure %1$s hPa</string>
     <string name="wind_speed">Wind speed %1$s m/s</string>
+    <string name="network_error">Please check your internet connection and try again.</string>
+    <string name="no_weather">Opps, looks like there is no weather forecast for your location =(</string>
 
 </resources>

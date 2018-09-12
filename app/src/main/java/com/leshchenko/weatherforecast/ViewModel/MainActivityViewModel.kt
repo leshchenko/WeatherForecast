@@ -5,14 +5,10 @@ import android.arch.lifecycle.AndroidViewModel
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
-import android.support.annotation.StringRes
-import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
-import com.leshchenko.weatherforecast.Model.adapters.WeatherRecyclerViewAdapter
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.WeatherRepository
 import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
@@ -31,6 +27,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var progressBarText: ObservableField<String> = ObservableField()
 
     var explanationGroupVisibility: ObservableInt = ObservableInt(View.VISIBLE)
+    var fulfilButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
     var explanationText: ObservableField<String> = ObservableField(getString(R.string.location_permission_explanatory_text))
 
     var weatherVisibility: ObservableInt = ObservableInt(View.GONE)
@@ -42,6 +39,17 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var currentLocation: Location? = null
     var daysTimestamps: List<Long> = Utils.getDaysTimestampsForForecast()
     var weatherForecast: MutableList<WeatherData> = mutableListOf()
+
+
+    private fun displayNetworkError() {
+        hideProgressBar()
+        hideWeather()
+        shouldRetry = true
+        shouldRequestLocationPermission = false
+        explanationText.set(getString(R.string.network_error))
+        explanationGroupVisibility.set(View.VISIBLE)
+        fulfilButtonVisibility.set(View.VISIBLE)
+    }
 
     private fun displayWeather() {
         hideProgressBar()
@@ -64,6 +72,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     private fun hideExplanationGroup() {
         explanationGroupVisibility.set(View.GONE)
+        fulfilButtonVisibility.set(View.GONE)
     }
 
     private fun displayErrorExplanation() {
@@ -72,6 +81,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         shouldRequestLocationPermission = false
         shouldRetry = true
         explanationText.set(getString(R.string.error_explanation))
+        fulfilButtonVisibility.set(View.VISIBLE)
         explanationGroupVisibility.set(View.VISIBLE)
 
     }
@@ -81,6 +91,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         hideWeather()
         shouldRetry = false
         shouldRequestLocationPermission = false
+        fulfilButtonVisibility.set(View.VISIBLE)
         explanationGroupVisibility.set(View.VISIBLE)
         explanationText.set(getString(R.string.turn_on_device_location))
     }
@@ -91,12 +102,23 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         shouldRetry = false
         shouldRequestLocationPermission = true
         explanationGroupVisibility.set(View.VISIBLE)
+        fulfilButtonVisibility.set(View.VISIBLE)
         explanationText.set(getString(R.string.location_permission_explanatory_text))
+    }
+
+    private fun displayNoWeather() {
+        hideWeather()
+        hideProgressBar()
+        explanationText.set(getString(R.string.no_weather))
+        fulfilButtonVisibility.set(View.GONE)
+        explanationGroupVisibility.set(View.VISIBLE)
     }
 
     fun fulfilWishButtonClick() {
         if (shouldRequestLocationPermission) {
             requestLocationPermissionEvent.call()
+        } else if (shouldRetry) {
+            requestWeather()
         } else {
             requestLocationEvent.call()
         }
@@ -118,19 +140,26 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun requestWeather() {
-        launch {
-            if (weatherForecast.isNotEmpty()) {
-                displayWeather()
-            } else {
-                currentLocation ?: requestLocationEvent.postValue(Any())
-                currentLocation?.let {
-                    displayProgressBar()
-                    val requestOpenWeatherForecast = WeatherRepository.requestOpenWeatherForecast(it.longitude, it.latitude)
-                    val requestDarkSkyForecast = WeatherRepository.requestDarkSkyForecast(it.longitude, it.latitude)
-                    var requestAccuWeatherForecast = WeatherRepository.requestAccuWeatherForecast(312856)
-                    deliverResult(arrayListOf<Any>(requestOpenWeatherForecast, requestDarkSkyForecast, requestAccuWeatherForecast))
+        if (Utils.isOnline(getApplication())) {
+            launch {
+                if (weatherForecast.isNotEmpty()) {
+                    displayWeather()
+                } else {
+                    currentLocation ?: requestLocationEvent.postValue(Any())
+                    currentLocation?.let {
+                        displayProgressBar()
+                        val requestAccuWeatherLocation = WeatherRepository.requestLocationForAccuWeather(it.longitude, it.latitude)
+                        if (requestAccuWeatherLocation.isSuccessful && requestAccuWeatherLocation.body() != null) {
+                            val requestOpenWeatherForecast = WeatherRepository.requestOpenWeatherForecast(it.longitude, it.latitude)
+                            val requestDarkSkyForecast = WeatherRepository.requestDarkSkyForecast(it.longitude, it.latitude)
+                            val requestAccuWeatherForecast = WeatherRepository.requestAccuWeatherForecast(requestAccuWeatherLocation.body()!!.Key)
+                            deliverResult(arrayListOf<Any>(requestOpenWeatherForecast, requestDarkSkyForecast, requestAccuWeatherForecast))
+                        }
+                    }
                 }
             }
+        } else {
+            displayNetworkError()
         }
     }
 
@@ -142,8 +171,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 displayErrorExplanation()
             }
         }
-        mergeWeather()
-        displayWeather()
+        if (weatherForecast.isEmpty()) {
+            displayNoWeather()
+        } else {
+            mergeWeather()
+            displayWeather()
+        }
     }
 
     private fun mergeWeather() {

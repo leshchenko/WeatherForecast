@@ -60,11 +60,11 @@ class WeatherRepository {
             return "$DARK_SKY_API_ENDPOINT$DARK_SKY_API_KEY/$latitude,$longitude"
         }
 
-        fun requestAccuWeatherForecast(locationKey: Int): Response<AccuWeatherResponse> {
+        fun requestAccuWeatherForecast(locationKey: String): Response<AccuWeatherResponse> {
             return retrofit.create(WeatherService::class.java).getAccuWeatherForecast(generateAccuWeatherForecastUrl(locationKey)).execute()
         }
 
-        private fun generateAccuWeatherForecastUrl(locationKey: Int): String {
+        private fun generateAccuWeatherForecastUrl(locationKey: String): String {
             return "$ACCU_WEATHER_FORECAST_ENDPONT$locationKey?apikey=$ACCU_WEATHER_API_KEY&details=true&metric=true"
         }
 
