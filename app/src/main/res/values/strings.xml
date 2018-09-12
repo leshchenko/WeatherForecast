@@ -14,5 +14,11 @@
 
     <string name="error_explanation">Something went wrong, please try again</string>
     <string name="image_for_weather">Image for weather</string>
+    <string name="precip_probability">Precip probability %s1 percents</string>
+    <string name="temperature">%s1 C</string>
+    <string name="cloudiness">Cloudiness %s1 percents</string>
+    <string name="humidity">Humidity %s1 percents</string>
+    <string name="pressure">Pressure %s1 hPa</string>
+    <string name="wind_speed">Wind speed %s1 m/s</string>
 
 </resources>

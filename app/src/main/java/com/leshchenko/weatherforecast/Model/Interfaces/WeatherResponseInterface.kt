@@ -14,13 +14,14 @@ data class ExtendedWeatherData(
         val cloudiness: Float,
         val windSpeed: Float,
         val pressure: Float,
-        val humidity: Float)
+        val humidity: Float,
+        val precipProbability: Float)
 
-data class WeatherData(val time: Long, val minTemp: Float, val maxTemp: Float, val weatherType: WeatherType)
+data class WeatherData(val time: Long, val minTemp: Float, val maxTemp: Float, val weatherType: WeatherType, val precipProbability: Float)
 
 enum class WeatherType(val vitalLevel: Int) {
-    RAIN(2),
-    SNOW(2),
+    RAIN(1),
+    SNOW(1),
     CLEAR(0),
-    THUNDERSTORM(3)
+    THUNDERSTORM(2)
 }

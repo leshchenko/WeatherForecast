@@ -8,17 +8,15 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.google.android.gms.common.api.ResolvableApiException
 import com.leshchenko.weatherforecast.Model.Interfaces.LocationResultCallback
-import com.leshchenko.weatherforecast.Model.WeatherRecyclerViewAdapter
+import com.leshchenko.weatherforecast.Model.adapters.WeatherRecyclerViewAdapter
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.LocationData
 import com.leshchenko.weatherforecast.Utils.PermissionHelper
 import com.leshchenko.weatherforecast.ViewModel.MainActivityViewModel
 import com.leshchenko.weatherforecast.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 class MainActivity : AppCompatActivity(), LocationResultCallback {
     override fun resolvableApiExceptionHappened(exception: ResolvableApiException) {
@@ -65,7 +63,10 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
     private fun weatherItemClick(time: Long) {
         val intent = Intent(baseContext, DetailsActivity::class.java)
         intent.putExtra(DetailsActivity.DATE_KEY, time)
+        intent.putExtra(DetailsActivity.LONGITUDE_KEY, viewModel.currentLocation?.longitude)
+        intent.putExtra(DetailsActivity.LATITUDE_KEY, viewModel.currentLocation?.latitude)
         startActivity(intent)
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

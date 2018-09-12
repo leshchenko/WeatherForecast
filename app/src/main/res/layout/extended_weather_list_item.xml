@@ -37,7 +37,7 @@
             app:layout_constraintTop_toBottomOf="@id/weatherDate" />
 
         <TextView
-            android:id="@+id/minTemperature"
+            android:id="@+id/temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="18 C"
@@ -46,23 +46,55 @@
             app:layout_constraintTop_toTopOf="@id/weatherImage" />
 
         <TextView
-            android:id="@+id/maxTemperature"
-            android:layout_width="wrap_content"
+            android:id="@+id/cloudiness"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="20 C"
-            android:textSize="16sp"
+            android:text="10%"
+            android:textAlignment="textStart"
             app:layout_constraintLeft_toRightOf="@id/weatherImage"
-            app:layout_constraintTop_toBottomOf="@id/minTemperature" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temperature" />
+
+        <TextView
+            android:id="@+id/windSpeed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="5.4 m/s"
+            android:textAlignment="textStart"
+            app:layout_constraintLeft_toRightOf="@id/weatherImage"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cloudiness" />
+
+        <TextView
+            android:id="@+id/pressure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="10 hPA"
+            android:textAlignment="textStart"
+            app:layout_constraintLeft_toRightOf="@id/weatherImage"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/windSpeed" />
+
+        <TextView
+            android:id="@+id/humidity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="10%"
+            android:textAlignment="textStart"
+            app:layout_constraintLeft_toRightOf="@id/weatherImage"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pressure" />
 
         <TextView
             android:id="@+id/precipProbability"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/precip_probability"
+            android:text="10%"
             android:textAlignment="textStart"
             app:layout_constraintLeft_toRightOf="@id/weatherImage"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/maxTemperature" />
+            app:layout_constraintTop_toBottomOf="@id/humidity" />
+
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

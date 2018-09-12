@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Model
+package com.leshchenko.weatherforecast.Model.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -28,8 +28,10 @@ class WeatherRecyclerViewAdapter(private val weatherList: List<WeatherData>, pri
         with(holder) {
             dateTextView.text = Date(weather.time * 1000).toString()
             weatherImage.setImageByWeatherType(weather.weatherType)
-            minTemperatureTextView.text = "${weather.minTemp} C"
-            maxTemperatureTextView.text = "${weather.maxTemp} C"
+            val context = holder.itemView.context
+            minTemperatureTextView.text = String.format(context.getString(R.string.temperature), weather.minTemp)
+            maxTemperatureTextView.text = String.format(context.getString(R.string.temperature), weather.maxTemp)
+            precipProbabilityTextView.text = String.format(context.getString(R.string.precip_probability), weather.precipProbability)
         }
     }
 }
@@ -39,4 +41,5 @@ class WeatherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val weatherImage = view.findViewById<ImageView>(R.id.weatherImage)
     val minTemperatureTextView = view.findViewById<TextView>(R.id.minTemperature)
     val maxTemperatureTextView = view.findViewById<TextView>(R.id.maxTemperature)
+    val precipProbabilityTextView = view.findViewById<TextView>(R.id.precipProbability)
 }

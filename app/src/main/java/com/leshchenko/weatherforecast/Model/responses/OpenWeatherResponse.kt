@@ -30,7 +30,7 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
         var maxTempSum = 0f
         var weatherType = WeatherType.CLEAR
         if (weatherList.isEmpty()) {
-            return WeatherData(-1L, -1f, -1f, weatherType)
+            return WeatherData(-1L, -1f, -1f, weatherType, -1f)
         } else {
             weatherList.forEach {
                 maxTempSum += it.main.maxTemperature
@@ -39,7 +39,16 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
                     weatherType = getWeatherType(it)
                 }
             }
-            return WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType)
+            return WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType,
+                    getPrecipProbability(weatherType))
+        }
+    }
+
+    private fun getPrecipProbability(weatherType: WeatherType): Float {
+        return if (weatherType == WeatherType.CLEAR) {
+            0f
+        } else {
+            1f
         }
     }
 
@@ -67,9 +76,11 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
     }
 
     private fun getExtendedWeatherData(data: Data): ExtendedWeatherData {
-        val temperature = data.main.minTemperature + data.main.maxTemperature / 2
-        return ExtendedWeatherData(data.time, temperature, getWeatherType(data),
-                data.clouds.all, data.wind.speed, data.main.pressure, data.main.humidity)
+        val temperature = (data.main.minTemperature + data.main.maxTemperature) / 2
+        val weatherType = getWeatherType(data)
+        val precipProbability = getPrecipProbability(weatherType)
+        return ExtendedWeatherData(data.time, temperature, weatherType,
+                data.clouds.all / 100, data.wind.speed, data.main.pressure, data.main.humidity / 100, precipProbability)
     }
 }
 

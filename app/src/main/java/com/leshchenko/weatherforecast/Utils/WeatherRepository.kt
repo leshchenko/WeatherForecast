@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class RetrofitHelper {
+class WeatherRepository {
     companion object {
         const val OPEN_WEATHER_API_ENDPOINT = "https://api.openweathermap.org/data/2.5/"
         const val OPEN_WEATHER_API_KEY = "210475a62f8486190ea75daac2348be9"
@@ -36,6 +36,16 @@ class RetrofitHelper {
         fun requestDarkSkyForecast(longitude: Double, latitude: Double): Response<DarkSkyResponse> {
             val url = generateDarkSkyForecastUrl(longitude, latitude)
             return retrofit.create(WeatherService::class.java).getDarkSkyForecast(url).execute()
+        }
+
+        fun requestDarkSkyForecastForDay(longitude: Double, latitude: Double, time: Long): Response<DarkSkyResponse> {
+            val url = generateDarkSkyForecastUrlForDay(longitude, latitude, time)
+            return retrofit.create(WeatherService::class.java).getDarkSkyForecast(url).execute()
+        }
+
+        // From the DarkSky doc, url should follow the next template -  https://api.darksky.net/forecast/[key]/[latitude],[longitude],[time]
+        private fun generateDarkSkyForecastUrlForDay(longitude: Double, latitude: Double, time: Long): String {
+            return "$DARK_SKY_API_ENDPOINT$DARK_SKY_API_KEY/$latitude,$longitude,$time"
         }
 
         // From the DarkSky doc, url should follow the next template -  https://api.darksky.net/forecast/[key]/[latitude],[longitude]

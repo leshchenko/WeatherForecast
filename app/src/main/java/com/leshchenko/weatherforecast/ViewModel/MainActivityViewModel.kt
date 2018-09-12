@@ -6,14 +6,16 @@ import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
 import android.support.annotation.StringRes
+import android.util.Log
 import android.view.View
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
 import com.leshchenko.weatherforecast.R
-import com.leshchenko.weatherforecast.Utils.RetrofitHelper
+import com.leshchenko.weatherforecast.Utils.WeatherRepository
 import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
 import com.leshchenko.weatherforecast.Utils.Utils
+import com.leshchenko.weatherforecast.Utils.getString
 import kotlinx.coroutines.experimental.launch
 import retrofit2.Response
 import java.util.*
@@ -51,9 +53,11 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun setLocation(location: Location?) {
-        currentLocation = location
-        progressBarText.set(getString(R.string.requesting_weather))
-        requestWeather()
+        currentLocation ?: kotlin.run {
+            currentLocation = location
+            progressBarText.set(getString(R.string.requesting_weather))
+            requestWeather()
+        }
     }
 
     private fun hideExplanationGroup() {
@@ -119,9 +123,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 currentLocation ?: requestLocationEvent.postValue(Any())
                 currentLocation?.let {
                     displayProgressBar()
-
-                    deliverResult(arrayListOf<Any>(RetrofitHelper.requestOpenWeatherForecast(it.longitude, it.latitude),
-                            RetrofitHelper.requestDarkSkyForecast(it.longitude, it.latitude)))
+                    Log.d("zlo", "request weather")
+                    val requestOpenWeatherForecast = WeatherRepository.requestOpenWeatherForecast(it.longitude, it.latitude)
+                    val requestDarkSkyForecast = WeatherRepository.requestDarkSkyForecast(it.longitude, it.latitude)
+                    deliverResult(arrayListOf<Any>(requestOpenWeatherForecast, requestDarkSkyForecast))
                 }
             }
         }
@@ -131,12 +136,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         result.forEach {
             if (isResponseSuccessful(it)) {
                 weatherForecast.addAll(getWeatherData(it))
-                mergeWeather()
-                displayWeather()
             } else {
                 displayErrorExplanation()
             }
         }
+        mergeWeather()
+        displayWeather()
     }
 
     private fun mergeWeather() {
@@ -144,6 +149,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         var minTemperature = Float.POSITIVE_INFINITY
         var maxTemperature = Float.NEGATIVE_INFINITY
         var weatherType = WeatherType.CLEAR
+        var precipProbability = 0f
+        var countOfRepeat = 0
         for (i in 0 until daysTimestamps.size) {
             weatherForecast.forEach {
                 val secondTimestampInSec = Utils.timeInSeconds(daysTimestamps[i])
@@ -157,11 +164,17 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     if (it.weatherType.vitalLevel > weatherType.vitalLevel) {
                         weatherType = it.weatherType
                     }
+                    precipProbability += it.precipProbability
+                    countOfRepeat++
                 }
             }
-            weatherList.add(WeatherData(Utils.timeInSeconds(daysTimestamps[i]), minTemperature, maxTemperature, weatherType))
+            weatherList.add(WeatherData(Utils.timeInSeconds(daysTimestamps[i]), minTemperature, maxTemperature, weatherType,
+                    precipProbability / countOfRepeat))
             minTemperature = Float.POSITIVE_INFINITY
             maxTemperature = Float.NEGATIVE_INFINITY
+            countOfRepeat = 0
+            precipProbability = 0f
+            weatherType = WeatherType.CLEAR
         }
         weatherForecast.clear()
         weatherForecast.addAll(weatherList)
@@ -187,9 +200,5 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         } else {
             throw IllegalArgumentException("Item should be inherited from Retrofit \"Response\" class")
         }
-    }
-
-    private fun getString(@StringRes resId: Int): String {
-        return getApplication<Application>().getString(resId)
     }
 }

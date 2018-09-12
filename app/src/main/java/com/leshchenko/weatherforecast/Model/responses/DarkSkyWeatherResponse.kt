@@ -30,18 +30,21 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
     fun getAverageWeatherData(data: List<DailyData>): WeatherData {
         var minTempSum = 0f
         var maxTempSum = 0f
+        var precipProbability = 0f
         var weatherType = WeatherType.CLEAR
         if (data.isEmpty()) {
-            return WeatherData(-1L, -1f, -1f, weatherType)
+            return WeatherData(-1L, -1f, -1f, weatherType, -1f)
         } else {
             data.forEach {
                 maxTempSum += it.temperatureMax
                 minTempSum += it.temperatureMin
+                precipProbability += it.precipProbability
                 if (getWeatherType(it.precipType).vitalLevel > weatherType.vitalLevel) {
                     weatherType = getWeatherType(it.precipType)
                 }
             }
-            return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType)
+            return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType,
+                    precipProbability / data.size)
         }
     }
 
@@ -68,7 +71,7 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
 
     fun getExtendedWeatherData(data: HourlyData): ExtendedWeatherData {
         return ExtendedWeatherData(data.time, data.temperature, getWeatherType(data.precipType),
-                data.cloudCover, data.windSpeed, data.pressure, data.humidity)
+                data.cloudCover, data.windSpeed, data.pressure, data.humidity, data.precipProbability)
     }
 
 }
