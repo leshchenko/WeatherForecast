@@ -1,10 +1,8 @@
 package com.leshchenko.weatherforecast.Utils
 
 import android.content.Context
-import java.util.*
-import android.net.NetworkInfo
-import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
+import java.util.*
 
 
 class Utils {

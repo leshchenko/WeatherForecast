@@ -14,16 +14,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class WeatherRepository {
     companion object {
-        const val OPEN_WEATHER_API_ENDPOINT = "https://api.openweathermap.org/data/2.5/"
+        private const val OPEN_WEATHER_API_ENDPOINT = "https://api.openweathermap.org/data/2.5/"
         const val OPEN_WEATHER_API_KEY = "210475a62f8486190ea75daac2348be9"
 
-        const val DARK_SKY_API_ENDPOINT = "https://api.darksky.net/forecast/"
-        const val DARK_SKY_API_KEY = "e75a20d2cab932ccf5eaeebe69fd2b33"
+        private const val DARK_SKY_API_ENDPOINT = "https://api.darksky.net/forecast/"
+        private const val DARK_SKY_API_KEY = "e75a20d2cab932ccf5eaeebe69fd2b33"
 
 
-        const val ACCU_WEATHER_FORECAST_ENDPONT = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/"
-        const val ACCU_WEATHER_LOCATION_ENDPOINT = "http://dataservice.accuweather.com/locations/v1/cities/geoposition/search"
-        const val ACCU_WEATHER_API_KEY = "yG0Tt2h8KyUlbOGF9OyXNjYUcefTyHrF"
+        private const val ACCU_WEATHER_FORECAST_ENDPONT = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/"
+        private const val ACCU_WEATHER_LOCATION_ENDPOINT = "http://dataservice.accuweather.com/locations/v1/cities/geoposition/search"
+        private const val ACCU_WEATHER_API_KEY = "yG0Tt2h8KyUlbOGF9OyXNjYUcefTyHrF"
 
         private val retrofit by lazy {
             val interceptor = HttpLoggingInterceptor()
@@ -64,6 +64,7 @@ class WeatherRepository {
             return retrofit.create(WeatherService::class.java).getAccuWeatherForecast(generateAccuWeatherForecastUrl(locationKey)).execute()
         }
 
+        //From AccuWeather doc, url should follow the next template -  http://dataservice.accuweather.com/forecasts/v1/daily/5day/[locationKey]?[apikey]&[details]&[metric]
         private fun generateAccuWeatherForecastUrl(locationKey: String): String {
             return "$ACCU_WEATHER_FORECAST_ENDPONT$locationKey?apikey=$ACCU_WEATHER_API_KEY&details=true&metric=true"
         }
@@ -72,6 +73,7 @@ class WeatherRepository {
             return retrofit.create(WeatherService::class.java).getAccuWeatherLocationKey(generateAccuWeatherLocationUrl(longitude, latitude)).execute()
         }
 
+        //From AccuWeather doc, url should follow the next template -  http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?[apikey],[q=lat,lot]
         private fun generateAccuWeatherLocationUrl(longitude: Double, latitude: Double): String {
             return "$ACCU_WEATHER_LOCATION_ENDPOINT?apikey=$ACCU_WEATHER_API_KEY&q=$latitude,$longitude"
         }

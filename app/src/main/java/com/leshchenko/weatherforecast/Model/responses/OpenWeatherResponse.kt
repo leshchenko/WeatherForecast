@@ -10,9 +10,9 @@ import com.leshchenko.weatherforecast.Utils.Utils
 import java.util.*
 
 
-class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
+class OpenWeatherResponse(private val list: List<Data>) : WeatherResponseInterface {
 
-    override fun getWeatherForCurrentDay(date: Date): WeatherData {
+    override fun getWeatherForCurrentDay(date: Date): WeatherData? {
         return getAverageWeatherData(date)
     }
 
@@ -24,14 +24,17 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
         return extendedWeatherData
     }
 
-    private fun getAverageWeatherData(date: Date): WeatherData {
+    private fun getAverageWeatherData(date: Date): WeatherData? {
         val weatherList = getWeatherDataForCurrentDay(date)
+        // Define variables for calculating average value.
         var minTempSum = 0f
         var maxTempSum = 0f
         var weatherType = WeatherType.CLEAR
-        if (weatherList.isEmpty()) {
-            return WeatherData(-1L, -1f, -1f, weatherType, -1f)
+
+        return if (weatherList.isEmpty()) {
+            null
         } else {
+            // Go through all available weather forecasts to calculate average values
             weatherList.forEach {
                 maxTempSum += it.main.maxTemperature
                 minTempSum += it.main.minTemperature
@@ -39,7 +42,7 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
                     weatherType = getWeatherType(it)
                 }
             }
-            return WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType,
+            WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType,
                     getPrecipProbability(weatherType))
         }
     }
@@ -79,7 +82,7 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
         val temperature = (data.main.minTemperature + data.main.maxTemperature) / 2
         val weatherType = getWeatherType(data)
         return ExtendedWeatherData(data.time, temperature, weatherType,
-                data.clouds.all/100, data.wind.speed, data.main.pressure, data.main.humidity / 100, getPrecipProbability(weatherType))
+                data.clouds.all, data.wind.speed, data.main.pressure, data.main.humidity, getPrecipProbability(weatherType))
     }
 }
 

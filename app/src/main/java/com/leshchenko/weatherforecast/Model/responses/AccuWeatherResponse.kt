@@ -7,8 +7,8 @@ import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
 import com.leshchenko.weatherforecast.Utils.Utils
 import java.util.*
 
-class AccuWeatherResponse(val DailyForecasts: List<DailyForecast>) : WeatherResponseInterface {
-    override fun getWeatherForCurrentDay(date: Date): WeatherData {
+class AccuWeatherResponse(private val DailyForecasts: List<DailyForecast>) : WeatherResponseInterface {
+    override fun getWeatherForCurrentDay(date: Date): WeatherData? {
         return getAverageWeatherData(date)
     }
 
@@ -17,15 +17,17 @@ class AccuWeatherResponse(val DailyForecasts: List<DailyForecast>) : WeatherResp
         return mutableListOf()
     }
 
-    private fun getAverageWeatherData(date: Date): WeatherData {
+    private fun getAverageWeatherData(date: Date): WeatherData? {
         val weatherList = getWeatherDataForCurrentDay(date)
+        // Define variables for calculating average value.
         var minTempSum = 0f
         var maxTempSum = 0f
         var precipProbability = 0f
         var weatherType = WeatherType.CLEAR
-        if (weatherList.isEmpty()) {
-            return WeatherData(-1L, -1f, -1f, weatherType, -1f)
+        return if (weatherList.isEmpty()) {
+            null
         } else {
+            // Go through all available weather forecasts to calculate average values
             weatherList.forEach {
                 maxTempSum += it.Temperature.Maximum.Value
                 minTempSum += it.Temperature.Minimum.Value
@@ -34,16 +36,8 @@ class AccuWeatherResponse(val DailyForecasts: List<DailyForecast>) : WeatherResp
                     weatherType = getWeatherType(it)
                 }
             }
-            return WeatherData(weatherList.first().EpochDate, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType,
+            WeatherData(weatherList.first().EpochDate, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType,
                     precipProbability / weatherList.size)
-        }
-    }
-
-    private fun getPrecipProbability(weatherType: WeatherType): Float {
-        return if (weatherType == WeatherType.CLEAR) {
-            0f
-        } else {
-            1f
         }
     }
 

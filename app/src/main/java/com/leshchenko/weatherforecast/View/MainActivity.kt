@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
     }
 
-    val locationData: LocationData  by lazy {
+    private val locationData: LocationData  by lazy {
         LocationData(this, this)
     }
 
@@ -38,15 +38,7 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         binding.weatherRecyclerView.adapter = weatherAdapter
         binding.viewModel = viewModel
         setContentView(binding.root)
-        viewModel.requestLocationPermissionEvent.observe(this, Observer {
-            PermissionHelper.requestLocationPermission(this)
-        })
-        viewModel.requestLocationEvent.observe(this, Observer {
-            requestLocation()
-        })
-        viewModel.displayWeatherEvent.observe(this, Observer {
-            weatherAdapter.notifyDataSetChanged()
-        })
+        addObservers()
         checkLocationPermission()
     }
 
@@ -96,6 +88,18 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         locationData.onDisable()
     }
 
+    private fun addObservers() {
+        viewModel.requestLocationPermissionEvent.observe(this, Observer {
+            PermissionHelper.requestLocationPermission(this)
+        })
+        viewModel.requestLocationEvent.observe(this, Observer {
+            requestLocation()
+        })
+        viewModel.displayWeatherEvent.observe(this, Observer {
+            weatherAdapter.notifyDataSetChanged()
+        })
+    }
+
     private fun requestLocation() {
         if (viewModel.resolvableApiExceptionHappened) {
             return
@@ -122,6 +126,6 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         intent.putExtra(DetailsActivity.LONGITUDE_KEY, viewModel.currentLocation?.longitude)
         intent.putExtra(DetailsActivity.LATITUDE_KEY, viewModel.currentLocation?.latitude)
         startActivity(intent)
-        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 }

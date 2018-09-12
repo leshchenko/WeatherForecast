@@ -13,7 +13,7 @@ import java.text.DateFormat
 import java.util.*
 
 
-class WeatherRecyclerViewAdapter(var weatherList: List<WeatherData>, private val itemClick: (time: Long) -> Unit) : RecyclerView.Adapter<WeatherViewHolder>() {
+class WeatherRecyclerViewAdapter(private var weatherList: List<WeatherData>, private val itemClick: (time: Long) -> Unit) : RecyclerView.Adapter<WeatherViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
         val layout = LayoutInflater.from(parent.context).inflate(R.layout.weather_list_item, parent, false)
         return WeatherViewHolder(layout)
@@ -28,21 +28,22 @@ class WeatherRecyclerViewAdapter(var weatherList: List<WeatherData>, private val
         holder.itemView.setOnClickListener { itemClick(weather.time) }
         with(holder) {
 
-            dateTextView.text = DateFormat.getDateInstance(DateFormat.LONG).format(Date(weather.time * 1000))
-            weatherImage.setImageByWeatherType(weather.weatherType)
+            val timeInMillis = weather.time * 1000
+            dateTextView?.text = DateFormat.getDateInstance(DateFormat.LONG).format(Date(timeInMillis))
+            weatherImage?.setImageByWeatherType(weather.weatherType)
             val context = holder.itemView.context
-            minTemperatureTextView.text = String.format(context.getString(R.string.temperature), weather.minTemp)
-            maxTemperatureTextView.text = String.format(context.getString(R.string.temperature), weather.maxTemp)
-            precipProbabilityTextView.text = String.format(context.getString(R.string.precip_probability), "%.1f".format(weather.precipProbability))
+            minTemperatureTextView?.text = String.format(context.getString(R.string.temperature), weather.minTemp)
+            maxTemperatureTextView?.text = String.format(context.getString(R.string.temperature), weather.maxTemp)
+            precipProbabilityTextView?.text = String.format(context.getString(R.string.precip_probability), "%.1f".format(weather.precipProbability))
         }
     }
 }
 
 
 class WeatherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val dateTextView = view.findViewById<TextView>(R.id.weatherDate)
-    val weatherImage = view.findViewById<ImageView>(R.id.weatherImage)
-    val minTemperatureTextView = view.findViewById<TextView>(R.id.minTemperature)
-    val maxTemperatureTextView = view.findViewById<TextView>(R.id.maxTemperature)
-    val precipProbabilityTextView = view.findViewById<TextView>(R.id.precipProbability)
+    val dateTextView: TextView? = view.findViewById(R.id.weatherDate)
+    val weatherImage: ImageView? = view.findViewById(R.id.weatherImage)
+    val minTemperatureTextView: TextView? = view.findViewById(R.id.minTemperature)
+    val maxTemperatureTextView: TextView? = view.findViewById(R.id.maxTemperature)
+    val precipProbabilityTextView: TextView? = view.findViewById(R.id.precipProbability)
 }

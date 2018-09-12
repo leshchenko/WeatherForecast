@@ -3,7 +3,7 @@ package com.leshchenko.weatherforecast.Model.Interfaces
 import java.util.*
 
 interface WeatherResponseInterface {
-    fun getWeatherForCurrentDay(date: Date): WeatherData
+    fun getWeatherForCurrentDay(date: Date): WeatherData?
     fun getExtendedWeatherForCurrentDay(date: Date): List<ExtendedWeatherData>
 }
 

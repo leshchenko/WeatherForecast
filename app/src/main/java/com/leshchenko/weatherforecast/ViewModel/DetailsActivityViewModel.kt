@@ -4,7 +4,6 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
-import android.util.Log
 import android.view.View
 import com.leshchenko.weatherforecast.Model.Interfaces.ExtendedWeatherData
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
@@ -25,10 +24,9 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
 
     var explanationGroupVisibility: ObservableInt = ObservableInt(View.VISIBLE)
     var fulfilButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
-
     var explanationText: ObservableField<String> = ObservableField()
 
-    var weatherVisibility: ObservableInt = ObservableInt(View.GONE)
+    private var weatherVisibility: ObservableInt = ObservableInt(View.GONE)
 
     var displayWeatherEvent = SingleLiveEvent<Any>()
 
@@ -37,7 +35,8 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var time = 0L
-    val hourTimestamps: List<Long> = Utils.getHourTimestampsForForecast()
+
+    private val hourTimestamps: List<Long> = Utils.getHourTimestampsForForecast()
 
     private fun displayNetworkError() {
         hideProgressBar()
@@ -111,7 +110,7 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun deliverResult(result: List<Any>) {
+    private fun deliverResult(result: List<Any>) {
         result.forEach {
             if (isResponseSuccessful(it)) {
                 weatherForecast.addAll(getWeatherData(it))
@@ -129,17 +128,20 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
 
     private fun mergeWeather() {
         val weatherList = mutableListOf<ExtendedWeatherData>()
-        var temperature: Float = 0f
+        // Define variables for calculating average value
+        var temperature = 0f
         var weatherType: WeatherType = WeatherType.CLEAR
-        var cloudiness: Float = 0f
-        var windSpeed: Float = 0f
-        var pressure: Float = 0f
-        var humidity: Float = 0f
+        var cloudiness = 0f
+        var windSpeed = 0f
+        var pressure = 0f
+        var humidity = 0f
         var precipProbability = 0f
         var countOfRepeat = 0
+        //Go through each hour in a day and calculate needed data
         for (i in 0 until hourTimestamps.size) {
             weatherForecast.forEach {
                 val secondTimestampInSec = Utils.timeInSeconds(hourTimestamps[i])
+                //  Add all values from one day
                 if (Utils.isTimestampsFromOneHour(it.time, secondTimestampInSec)) {
                     temperature += it.temperature
                     if (it.weatherType.vitalLevel > weatherType.vitalLevel) {
@@ -153,6 +155,7 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
                     countOfRepeat++
                 }
             }
+            // Add weather data if there is data for current time.
             if (countOfRepeat != 0) {
                 val extendedWeatherData = ExtendedWeatherData(Utils.timeInSeconds(hourTimestamps[i]),
                         temperature / countOfRepeat, weatherType, cloudiness / countOfRepeat,
@@ -160,12 +163,14 @@ class DetailsActivityViewModel(application: Application) : AndroidViewModel(appl
                         precipProbability / countOfRepeat)
                 weatherList.add(extendedWeatherData)
             }
+            // Reset values.
             temperature = 0f
             weatherType = WeatherType.CLEAR
             cloudiness = 0f
             windSpeed = 0f
             pressure = 0f
             humidity = 0f
+            precipProbability = 0f
             countOfRepeat = 0
         }
         weatherForecast.clear()

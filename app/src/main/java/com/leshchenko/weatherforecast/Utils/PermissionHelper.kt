@@ -10,17 +10,15 @@ import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.view.View
-import com.leshchenko.weatherforecast.R
 
 
 class PermissionHelper {
     companion object {
 
         const val LOCATION_PERMISSION_REQUEST_CODE = 1001
-        const val LOCATION_PERMISSION = android.Manifest.permission.ACCESS_COARSE_LOCATION
-        const val FINE_LOCATION_PERMISSION = android.Manifest.permission.ACCESS_FINE_LOCATION
+        private const val LOCATION_PERMISSION = android.Manifest.permission.ACCESS_COARSE_LOCATION
+        private const val FINE_LOCATION_PERMISSION = android.Manifest.permission.ACCESS_FINE_LOCATION
 
         fun isLocationPermissionGranted(context: Context) =
                 ContextCompat.checkSelfPermission(context, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED &&

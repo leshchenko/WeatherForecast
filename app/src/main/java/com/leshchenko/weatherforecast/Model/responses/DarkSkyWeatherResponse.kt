@@ -8,8 +8,8 @@ import com.leshchenko.weatherforecast.Utils.Utils
 import java.util.*
 
 
-class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInterface {
-    override fun getWeatherForCurrentDay(date: Date): WeatherData {
+class DarkSkyResponse(private val hourly: Hourly, private val daily: Daily) : WeatherResponseInterface {
+    override fun getWeatherForCurrentDay(date: Date): WeatherData? {
         val weatherDataList = mutableListOf<DailyData>()
         daily.data.forEach {
             if (Utils.isTimestampsFromOneDay(it.time, Utils.timeInSeconds(date.time))) {
@@ -27,14 +27,17 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
         return extendedWeatherData
     }
 
-    fun getAverageWeatherData(data: List<DailyData>): WeatherData {
+    private fun getAverageWeatherData(data: List<DailyData>): WeatherData? {
+        // Define variables for calculating average value.
         var minTempSum = 0f
         var maxTempSum = 0f
         var precipProbability = 0f
         var weatherType = WeatherType.CLEAR
-        if (data.isEmpty()) {
-            return WeatherData(-1L, -1f, -1f, weatherType, -1f)
+
+        return if (data.isEmpty()) {
+            null
         } else {
+            // Go through all available weather forecasts to calculate average values
             data.forEach {
                 maxTempSum += it.temperatureMax
                 minTempSum += it.temperatureMin
@@ -43,12 +46,14 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
                     weatherType = getWeatherType(it.precipType)
                 }
             }
-            return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType,
-                    (precipProbability / data.size) * 100)
+            // Move precip probability in percents
+            val precipProbabilityInPercents = (precipProbability / data.size) * 100
+            WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType,
+                    precipProbabilityInPercents)
         }
     }
 
-    fun getWeatherDataForCurrentDay(date: Date): List<HourlyData> {
+    private fun getWeatherDataForCurrentDay(date: Date): List<HourlyData> {
         val weatherDataList = mutableListOf<HourlyData>()
         hourly.data.forEach {
             if (Utils.isTimestampsFromOneDay(it.time, Utils.timeInSeconds(date.time))) {
@@ -69,9 +74,11 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
         return weatherType
     }
 
-    fun getExtendedWeatherData(data: HourlyData): ExtendedWeatherData {
+    private fun getExtendedWeatherData(data: HourlyData): ExtendedWeatherData {
+        // Move precip probability in percents
+        val precipProbability = (data.precipProbability) * 100
         return ExtendedWeatherData(data.time, data.temperature, getWeatherType(data.precipType),
-                data.cloudCover, data.windSpeed, data.pressure, data.humidity, (data.precipProbability) * 100)
+                data.cloudCover, data.windSpeed, data.pressure, data.humidity, precipProbability)
     }
 
 }

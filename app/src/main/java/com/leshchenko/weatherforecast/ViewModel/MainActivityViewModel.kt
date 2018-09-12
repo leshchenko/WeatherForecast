@@ -19,8 +19,10 @@ import retrofit2.Response
 import java.util.*
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+
     private var shouldRequestLocationPermission = true
     private var shouldRetry = false
+
     var resolvableApiExceptionHappened = false
 
     var progressBarGroupVisibility: ObservableInt = ObservableInt(View.GONE)
@@ -30,15 +32,16 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var fulfilButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
     var explanationText: ObservableField<String> = ObservableField(getString(R.string.location_permission_explanatory_text))
 
-    var weatherVisibility: ObservableInt = ObservableInt(View.GONE)
+    private var weatherVisibility: ObservableInt = ObservableInt(View.GONE)
 
     var requestLocationPermissionEvent: SingleLiveEvent<Any> = SingleLiveEvent()
     var requestLocationEvent: SingleLiveEvent<Any> = SingleLiveEvent()
     var displayWeatherEvent: SingleLiveEvent<Any> = SingleLiveEvent()
 
     var currentLocation: Location? = null
-    var daysTimestamps: List<Long> = Utils.getDaysTimestampsForForecast()
     var weatherForecast: MutableList<WeatherData> = mutableListOf()
+
+    private var daysTimestamps: List<Long> = Utils.getDaysTimestampsForForecast()
 
 
     private fun displayNetworkError() {
@@ -115,12 +118,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun fulfilWishButtonClick() {
-        if (shouldRequestLocationPermission) {
-            requestLocationPermissionEvent.call()
-        } else if (shouldRetry) {
-            requestWeather()
-        } else {
-            requestLocationEvent.call()
+        when {
+            shouldRequestLocationPermission -> requestLocationPermissionEvent.call()
+            shouldRetry -> requestWeather()
+            else -> requestLocationEvent.call()
         }
     }
 
@@ -163,7 +164,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun deliverResult(result: List<Any>) {
+    private fun deliverResult(result: List<Any>) {
         result.forEach {
             if (isResponseSuccessful(it)) {
                 weatherForecast.addAll(getWeatherData(it))
@@ -181,14 +182,17 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     private fun mergeWeather() {
         val weatherList = mutableListOf<WeatherData>()
+        // Define variables for calculating needed data
         var minTemperature = Float.POSITIVE_INFINITY
         var maxTemperature = Float.NEGATIVE_INFINITY
         var weatherType = WeatherType.CLEAR
         var precipProbability = 0f
         var countOfRepeat = 0
+        // Go through all days in the loop
         for (i in 0 until daysTimestamps.size) {
             weatherForecast.forEach {
                 val secondTimestampInSec = Utils.timeInSeconds(daysTimestamps[i])
+                // Calculate needed data for each day
                 if (Utils.isTimestampsFromOneDay(it.time, secondTimestampInSec)) {
                     if (it.maxTemp > maxTemperature) {
                         maxTemperature = it.maxTemp
@@ -203,8 +207,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     countOfRepeat++
                 }
             }
+
             weatherList.add(WeatherData(Utils.timeInSeconds(daysTimestamps[i]), minTemperature, maxTemperature, weatherType,
                     precipProbability / countOfRepeat))
+            // Reset variables
             minTemperature = Float.POSITIVE_INFINITY
             maxTemperature = Float.NEGATIVE_INFINITY
             countOfRepeat = 0
@@ -220,7 +226,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             if (item.body() is WeatherResponseInterface) {
                 val weatherData = mutableListOf<WeatherData>()
                 daysTimestamps.forEach {
-                    weatherData.add((item.body() as WeatherResponseInterface).getWeatherForCurrentDay(Date(it)))
+                    (item.body() as WeatherResponseInterface).getWeatherForCurrentDay(Date(it))?.let { weatherData.add(it) }
                 }
                 return weatherData
             } else {
