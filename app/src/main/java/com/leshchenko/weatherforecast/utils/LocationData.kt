@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Utils
+package com.leshchenko.weatherforecast.utils
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -12,7 +12,7 @@ import android.support.v4.app.ActivityCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
-import com.leshchenko.weatherforecast.Model.Interfaces.LocationResultCallback
+import com.leshchenko.weatherforecast.model.interfaces.LocationResultCallback
 import java.util.concurrent.TimeUnit
 
 class LocationData @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])

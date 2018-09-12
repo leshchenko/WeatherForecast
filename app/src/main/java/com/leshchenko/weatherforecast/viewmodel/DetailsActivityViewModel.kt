@@ -1,18 +1,18 @@
-package com.leshchenko.weatherforecast.ViewModel
+package com.leshchenko.weatherforecast.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.view.View
-import com.leshchenko.weatherforecast.Model.Interfaces.ExtendedWeatherData
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
+import com.leshchenko.weatherforecast.model.interfaces.ExtendedWeatherData
+import com.leshchenko.weatherforecast.model.interfaces.WeatherResponseInterface
+import com.leshchenko.weatherforecast.model.interfaces.WeatherType
 import com.leshchenko.weatherforecast.R
-import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
-import com.leshchenko.weatherforecast.Utils.Utils
-import com.leshchenko.weatherforecast.Utils.WeatherRepository
-import com.leshchenko.weatherforecast.Utils.getString
+import com.leshchenko.weatherforecast.utils.SingleLiveEvent
+import com.leshchenko.weatherforecast.utils.Utils
+import com.leshchenko.weatherforecast.utils.WeatherRepository
+import com.leshchenko.weatherforecast.utils.getString
 import kotlinx.coroutines.experimental.launch
 import retrofit2.Response
 import java.util.*

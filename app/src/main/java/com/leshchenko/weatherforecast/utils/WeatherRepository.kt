@@ -1,10 +1,10 @@
-package com.leshchenko.weatherforecast.Utils
+package com.leshchenko.weatherforecast.utils
 
-import com.leshchenko.weatherforecast.Model.responses.AccuWeatherLocationResponse
-import com.leshchenko.weatherforecast.Model.responses.AccuWeatherResponse
-import com.leshchenko.weatherforecast.Model.responses.DarkSkyResponse
-import com.leshchenko.weatherforecast.Model.responses.OpenWeatherResponse
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherService
+import com.leshchenko.weatherforecast.model.responses.AccuWeatherLocationResponse
+import com.leshchenko.weatherforecast.model.responses.AccuWeatherResponse
+import com.leshchenko.weatherforecast.model.responses.DarkSkyResponse
+import com.leshchenko.weatherforecast.model.responses.OpenWeatherResponse
+import com.leshchenko.weatherforecast.model.interfaces.WeatherService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response

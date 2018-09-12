@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Utils
+package com.leshchenko.weatherforecast.utils
 
 import android.app.Activity
 import android.content.Context

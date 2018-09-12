@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.ViewModel
+package com.leshchenko.weatherforecast.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
@@ -6,14 +6,14 @@ import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
 import android.view.View
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
+import com.leshchenko.weatherforecast.model.interfaces.WeatherData
+import com.leshchenko.weatherforecast.model.interfaces.WeatherResponseInterface
+import com.leshchenko.weatherforecast.model.interfaces.WeatherType
 import com.leshchenko.weatherforecast.R
-import com.leshchenko.weatherforecast.Utils.WeatherRepository
-import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
-import com.leshchenko.weatherforecast.Utils.Utils
-import com.leshchenko.weatherforecast.Utils.getString
+import com.leshchenko.weatherforecast.utils.WeatherRepository
+import com.leshchenko.weatherforecast.utils.SingleLiveEvent
+import com.leshchenko.weatherforecast.utils.Utils
+import com.leshchenko.weatherforecast.utils.getString
 import kotlinx.coroutines.experimental.launch
 import retrofit2.Response
 import java.util.*
@@ -153,7 +153,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                         if (requestAccuWeatherLocation.isSuccessful && requestAccuWeatherLocation.body() != null) {
                             val requestOpenWeatherForecast = WeatherRepository.requestOpenWeatherForecast(it.longitude, it.latitude)
                             val requestDarkSkyForecast = WeatherRepository.requestDarkSkyForecast(it.longitude, it.latitude)
-                            val requestAccuWeatherForecast = WeatherRepository.requestAccuWeatherForecast(requestAccuWeatherLocation.body()!!.Key)
+                            val requestAccuWeatherForecast = WeatherRepository.requestAccuWeatherForecast(requestAccuWeatherLocation.body()!!.key)
                             deliverResult(arrayListOf<Any>(requestOpenWeatherForecast, requestDarkSkyForecast, requestAccuWeatherForecast))
                         }
                     }

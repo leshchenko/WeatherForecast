@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.leshchenko.weatherforecast.Utils;
+package com.leshchenko.weatherforecast.utils;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;

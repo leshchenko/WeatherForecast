@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.View
+package com.leshchenko.weatherforecast.view
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
@@ -9,12 +9,12 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import com.google.android.gms.common.api.ResolvableApiException
-import com.leshchenko.weatherforecast.Model.Interfaces.LocationResultCallback
-import com.leshchenko.weatherforecast.Model.adapters.WeatherRecyclerViewAdapter
+import com.leshchenko.weatherforecast.model.interfaces.LocationResultCallback
+import com.leshchenko.weatherforecast.model.adapters.WeatherRecyclerViewAdapter
 import com.leshchenko.weatherforecast.R
-import com.leshchenko.weatherforecast.Utils.LocationData
-import com.leshchenko.weatherforecast.Utils.PermissionHelper
-import com.leshchenko.weatherforecast.ViewModel.MainActivityViewModel
+import com.leshchenko.weatherforecast.utils.LocationData
+import com.leshchenko.weatherforecast.utils.PermissionHelper
+import com.leshchenko.weatherforecast.viewmodel.MainActivityViewModel
 import com.leshchenko.weatherforecast.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), LocationResultCallback {

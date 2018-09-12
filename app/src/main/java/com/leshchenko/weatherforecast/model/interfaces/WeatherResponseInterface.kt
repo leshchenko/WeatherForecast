@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Model.Interfaces
+package com.leshchenko.weatherforecast.model.interfaces
 
 import java.util.*
 

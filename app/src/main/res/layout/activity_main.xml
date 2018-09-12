@@ -8,7 +8,7 @@
 
         <variable
             name="ViewModel"
-            type="com.leshchenko.weatherforecast.ViewModel.MainActivityViewModel" />
+            type="com.leshchenko.weatherforecast.viewmodel.MainActivityViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Model.Interfaces
+package com.leshchenko.weatherforecast.model.interfaces
 
 import android.location.Location
 import com.google.android.gms.common.api.ResolvableApiException

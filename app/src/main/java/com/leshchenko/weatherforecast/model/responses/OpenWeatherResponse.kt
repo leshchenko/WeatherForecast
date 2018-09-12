@@ -1,12 +1,12 @@
-package com.leshchenko.weatherforecast.Model.responses
+package com.leshchenko.weatherforecast.model.responses
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.leshchenko.weatherforecast.Model.Interfaces.ExtendedWeatherData
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
-import com.leshchenko.weatherforecast.Utils.Utils
+import com.leshchenko.weatherforecast.model.interfaces.ExtendedWeatherData
+import com.leshchenko.weatherforecast.model.interfaces.WeatherData
+import com.leshchenko.weatherforecast.model.interfaces.WeatherResponseInterface
+import com.leshchenko.weatherforecast.model.interfaces.WeatherType
+import com.leshchenko.weatherforecast.utils.Utils
 import java.util.*
 
 

@@ -1,13 +1,13 @@
-package com.leshchenko.weatherforecast.View
+package com.leshchenko.weatherforecast.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import com.leshchenko.weatherforecast.Model.adapters.ExtendedWeatherRecyclerAdapter
+import com.leshchenko.weatherforecast.model.adapters.ExtendedWeatherRecyclerAdapter
 import com.leshchenko.weatherforecast.R
-import com.leshchenko.weatherforecast.ViewModel.DetailsActivityViewModel
+import com.leshchenko.weatherforecast.viewmodel.DetailsActivityViewModel
 import com.leshchenko.weatherforecast.databinding.ActivityDetailsBinding
 
 class DetailsActivity : AppCompatActivity() {

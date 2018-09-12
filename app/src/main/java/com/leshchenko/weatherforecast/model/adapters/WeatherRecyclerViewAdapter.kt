@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Model.adapters
+package com.leshchenko.weatherforecast.model.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
+import com.leshchenko.weatherforecast.model.interfaces.WeatherData
 import com.leshchenko.weatherforecast.R
-import com.leshchenko.weatherforecast.Utils.setImageByWeatherType
+import com.leshchenko.weatherforecast.utils.setImageByWeatherType
 import java.text.DateFormat
 import java.util.*
 

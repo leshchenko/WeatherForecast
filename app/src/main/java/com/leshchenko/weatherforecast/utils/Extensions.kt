@@ -1,10 +1,10 @@
-package com.leshchenko.weatherforecast.Utils
+package com.leshchenko.weatherforecast.utils
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.support.annotation.StringRes
 import android.widget.ImageView
-import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
+import com.leshchenko.weatherforecast.model.interfaces.WeatherType
 import com.leshchenko.weatherforecast.R
 
 fun ImageView.setImageByWeatherType(weatherType: WeatherType) {
