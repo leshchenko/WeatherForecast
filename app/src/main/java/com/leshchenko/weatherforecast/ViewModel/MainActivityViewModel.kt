@@ -31,6 +31,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var requestLocationEvent: SingleLiveEvent<Any> = SingleLiveEvent()
 
     var currentLocation: Location? = null
+    var daysTimestamps: List<Long> = Utils.getDaysTimestampsForForecast()
+    var weatherForecast: MutableList<WeatherData> = mutableListOf()
 
     fun setLocation(location: Location?) {
         currentLocation = location
@@ -91,22 +93,26 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         val weatherList = mutableListOf<WeatherData>()
         result.forEach {
             if (isResponseSuccessful(it)) {
-                weatherList.add(getWeatherData(it))
+                weatherForecast.addAll(getWeatherData(it))
             } else {
                 TODO()
             }
         }
-        weatherList.forEach {
-            Log.d("zlo", "Min temperature ${it.minTemp} \n max temperature ${it.maxTemp}")
+        weatherForecast.forEach {
+            Log.d("zlo", "Min temperature ${it.minTemp} \n time ${Date(it.time * 1000)}")
         }
 //        Log.d("zlo", "${result.first().body()?.list}")
 //        Log.d("zlo", "${result1.substring(0, 10)}\n${result2.substring(0, 10)}")
     }
 
-    private fun getWeatherData(item: Any): WeatherData {
+    private fun getWeatherData(item: Any): List<WeatherData> {
         with(item as Response<*>) {
             if (item.body() is WeatherResponseInterface) {
-                return (item.body() as WeatherResponseInterface).getWeatherForCurrentDay(Date(Utils.currentTimeSeconds()))
+                val weatherData = mutableListOf<WeatherData>()
+                daysTimestamps.forEach {
+                    weatherData.add((item.body() as WeatherResponseInterface).getWeatherForCurrentDay(Date(it)))
+                }
+                return weatherData
             } else {
                 throw IllegalArgumentException("Item should be inherited from \"WeatherResponseInterface\" class")
             }

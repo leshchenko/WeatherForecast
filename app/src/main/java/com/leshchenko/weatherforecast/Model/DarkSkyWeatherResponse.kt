@@ -12,7 +12,7 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
     override fun getWeatherForCurrentDay(date: Date): WeatherData {
         val weatherDataList = mutableListOf<DailyData>()
         daily.data.forEach {
-            if (Utils.isTimestampsFromOneDay(it.time, date.time)) {
+            if (Utils.isTimestampsFromOneDay(it.time, Utils.timeInSeconds(date.time))) {
                 weatherDataList.add(it)
             }
         }
@@ -38,13 +38,13 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
                 weatherType = getWeatherType(it.precipType)
             }
         }
-        return WeatherData(minTempSum / data.size, maxTempSum / data.size, weatherType)
+        return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType)
     }
 
     fun getWeatherDataForCurrentDay(date: Date): List<HourlyData> {
         val weatherDataList = mutableListOf<HourlyData>()
         hourly.data.forEach {
-            if (Utils.isTimestampsFromOneDay(it.time, date.time)) {
+            if (Utils.isTimestampsFromOneDay(it.time, Utils.timeInSeconds(date.time))) {
                 weatherDataList.add(it)
             }
         }

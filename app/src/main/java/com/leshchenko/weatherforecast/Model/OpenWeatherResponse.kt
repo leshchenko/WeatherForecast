@@ -37,13 +37,13 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
                 weatherType = getWeatherType(it)
             }
         }
-        return WeatherData(minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType)
+        return WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType)
     }
 
     private fun getWeatherDataForCurrentDay(date: Date): List<Data> {
         val weatherDataList = mutableListOf<Data>()
         list.forEach {
-            if (Utils.isTimestampsFromOneDay(it.time, date.time)) {
+            if (Utils.isTimestampsFromOneDay(it.time, Utils.timeInSeconds(date.time))) {
                 weatherDataList.add(it)
             }
         }
