@@ -12,4 +12,7 @@
     <string name="defining_location">Defining location</string>
     <string name="requesting_weather">Requesting weather data</string>
 
+    <string name="error_explanation">Something went wrong, please try again</string>
+    <string name="image_for_weather">Image for weather</string>
+
 </resources>

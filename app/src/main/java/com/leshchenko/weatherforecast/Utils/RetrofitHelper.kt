@@ -1,7 +1,7 @@
 package com.leshchenko.weatherforecast.Utils
 
-import com.leshchenko.weatherforecast.Model.DarkSkyResponse
-import com.leshchenko.weatherforecast.Model.OpenWeatherResponse
+import com.leshchenko.weatherforecast.Model.responses.DarkSkyResponse
+import com.leshchenko.weatherforecast.Model.responses.OpenWeatherResponse
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

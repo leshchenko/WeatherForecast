@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Model
+package com.leshchenko.weatherforecast.Model.responses
 
 import com.leshchenko.weatherforecast.Model.Interfaces.ExtendedWeatherData
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
@@ -31,14 +31,18 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
         var minTempSum = 0f
         var maxTempSum = 0f
         var weatherType = WeatherType.CLEAR
-        data.forEach {
-            maxTempSum += it.temperatureMax
-            minTempSum += it.temperatureMin
-            if (getWeatherType(it.precipType).vitalLevel > weatherType.vitalLevel) {
-                weatherType = getWeatherType(it.precipType)
+        if (data.isEmpty()) {
+            return WeatherData(-1L, -1f, -1f, weatherType)
+        } else {
+            data.forEach {
+                maxTempSum += it.temperatureMax
+                minTempSum += it.temperatureMin
+                if (getWeatherType(it.precipType).vitalLevel > weatherType.vitalLevel) {
+                    weatherType = getWeatherType(it.precipType)
+                }
             }
+            return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType)
         }
-        return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType)
     }
 
     fun getWeatherDataForCurrentDay(date: Date): List<HourlyData> {

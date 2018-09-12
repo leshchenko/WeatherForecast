@@ -22,6 +22,5 @@ enum class WeatherType(val vitalLevel: Int) {
     RAIN(2),
     SNOW(2),
     CLEAR(0),
-    CLOUDS(1),
     THUNDERSTORM(3)
 }

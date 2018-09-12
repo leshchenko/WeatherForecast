@@ -1,7 +1,7 @@
 package com.leshchenko.weatherforecast.Model.Interfaces
 
-import com.leshchenko.weatherforecast.Model.DarkSkyResponse
-import com.leshchenko.weatherforecast.Model.OpenWeatherResponse
+import com.leshchenko.weatherforecast.Model.responses.DarkSkyResponse
+import com.leshchenko.weatherforecast.Model.responses.OpenWeatherResponse
 import com.leshchenko.weatherforecast.Utils.RetrofitHelper
 import retrofit2.Call
 import retrofit2.http.GET

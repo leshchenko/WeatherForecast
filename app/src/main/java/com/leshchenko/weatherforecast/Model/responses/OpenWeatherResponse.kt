@@ -1,4 +1,4 @@
-package com.leshchenko.weatherforecast.Model
+package com.leshchenko.weatherforecast.Model.responses
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -25,19 +25,22 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
     }
 
     private fun getAverageWeatherData(date: Date): WeatherData {
-
         val weatherList = getWeatherDataForCurrentDay(date)
         var minTempSum = 0f
         var maxTempSum = 0f
         var weatherType = WeatherType.CLEAR
-        weatherList.forEach {
-            maxTempSum += it.main.maxTemperature
-            minTempSum += it.main.minTemperature
-            if (getWeatherType(it).vitalLevel > weatherType.vitalLevel) {
-                weatherType = getWeatherType(it)
+        if (weatherList.isEmpty()) {
+            return WeatherData(-1L, -1f, -1f, weatherType)
+        } else {
+            weatherList.forEach {
+                maxTempSum += it.main.maxTemperature
+                minTempSum += it.main.minTemperature
+                if (getWeatherType(it).vitalLevel > weatherType.vitalLevel) {
+                    weatherType = getWeatherType(it)
+                }
             }
+            return WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType)
         }
-        return WeatherData(weatherList.first().time, minTempSum / weatherList.size, maxTempSum / weatherList.size, weatherType)
     }
 
     private fun getWeatherDataForCurrentDay(date: Date): List<Data> {
@@ -57,7 +60,6 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
                 in 200..232 -> weatherType = WeatherType.THUNDERSTORM
                 in 500..531 -> weatherType = WeatherType.RAIN
                 in 600..622 -> weatherType = WeatherType.SNOW
-                in 801..804 -> weatherType = WeatherType.CLOUDS
                 800 -> weatherType = WeatherType.CLEAR
             }
         }
