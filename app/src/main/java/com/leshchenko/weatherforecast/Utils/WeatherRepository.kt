@@ -1,5 +1,7 @@
 package com.leshchenko.weatherforecast.Utils
 
+import com.leshchenko.weatherforecast.Model.responses.AccuWeatherLocationResponse
+import com.leshchenko.weatherforecast.Model.responses.AccuWeatherResponse
 import com.leshchenko.weatherforecast.Model.responses.DarkSkyResponse
 import com.leshchenko.weatherforecast.Model.responses.OpenWeatherResponse
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherService
@@ -17,6 +19,11 @@ class WeatherRepository {
 
         const val DARK_SKY_API_ENDPOINT = "https://api.darksky.net/forecast/"
         const val DARK_SKY_API_KEY = "e75a20d2cab932ccf5eaeebe69fd2b33"
+
+
+        const val ACCU_WEATHER_FORECAST_ENDPONT = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/"
+        const val ACCU_WEATHER_LOCATION_ENDPOINT = "http://dataservice.accuweather.com/locations/v1/cities/geoposition/search"
+        const val ACCU_WEATHER_API_KEY = "yG0Tt2h8KyUlbOGF9OyXNjYUcefTyHrF"
 
         private val retrofit by lazy {
             val interceptor = HttpLoggingInterceptor()
@@ -51,6 +58,22 @@ class WeatherRepository {
         // From the DarkSky doc, url should follow the next template -  https://api.darksky.net/forecast/[key]/[latitude],[longitude]
         private fun generateDarkSkyForecastUrl(longitude: Double, latitude: Double): String {
             return "$DARK_SKY_API_ENDPOINT$DARK_SKY_API_KEY/$latitude,$longitude"
+        }
+
+        fun requestAccuWeatherForecast(locationKey: Int): Response<AccuWeatherResponse> {
+            return retrofit.create(WeatherService::class.java).getAccuWeatherForecast(generateAccuWeatherForecastUrl(locationKey)).execute()
+        }
+
+        private fun generateAccuWeatherForecastUrl(locationKey: Int): String {
+            return "$ACCU_WEATHER_FORECAST_ENDPONT$locationKey?apikey=$ACCU_WEATHER_API_KEY&details=true&metric=true"
+        }
+
+        fun requestLocationForAccuWeather(longitude: Double, latitude: Double): Response<AccuWeatherLocationResponse> {
+            return retrofit.create(WeatherService::class.java).getAccuWeatherLocationKey(generateAccuWeatherLocationUrl(longitude, latitude)).execute()
+        }
+
+        private fun generateAccuWeatherLocationUrl(longitude: Double, latitude: Double): String {
+            return "$ACCU_WEATHER_LOCATION_ENDPOINT?apikey=$ACCU_WEATHER_API_KEY&q=$latitude,$longitude"
         }
     }
 }

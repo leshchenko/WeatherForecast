@@ -2,15 +2,13 @@ package com.leshchenko.weatherforecast.View
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.leshchenko.weatherforecast.Model.adapters.ExtendedWeatherRecyclerAdapter
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.ViewModel.DetailsActivityViewModel
 import com.leshchenko.weatherforecast.databinding.ActivityDetailsBinding
-import kotlinx.android.synthetic.main.activity_details.*
 
 class DetailsActivity : AppCompatActivity() {
     companion object {
@@ -22,16 +20,19 @@ class DetailsActivity : AppCompatActivity() {
     val viewModel by lazy {
         ViewModelProviders.of(this).get(DetailsActivityViewModel::class.java)
     }
+    val weatherAdapter by lazy {
+        ExtendedWeatherRecyclerAdapter(viewModel.weatherForecast)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val activityDetailsBinding = ActivityDetailsBinding.inflate(layoutInflater)
         activityDetailsBinding.viewModel = viewModel
+        activityDetailsBinding.weatherRecyclerView.layoutManager = LinearLayoutManager(baseContext)
+        activityDetailsBinding.weatherRecyclerView.adapter = weatherAdapter
         setContentView(activityDetailsBinding.root)
         viewModel.displayWeatherEvent.observe(this, Observer {
-            weatherRecyclerView.layoutManager = LinearLayoutManager(baseContext)
-            weatherRecyclerView.adapter = ExtendedWeatherRecyclerAdapter(viewModel.weatherForecast)
-            weatherRecyclerView.adapter.notifyDataSetChanged()
+            weatherAdapter.notifyDataSetChanged()
         })
         viewModel.time = intent.getLongExtra(DATE_KEY, System.currentTimeMillis())
         viewModel.latitude = intent.getDoubleExtra(LATITUDE_KEY, 0.0)

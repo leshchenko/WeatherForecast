@@ -48,7 +48,7 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
         return if (weatherType == WeatherType.CLEAR) {
             0f
         } else {
-            1f
+            100f
         }
     }
 
@@ -78,9 +78,8 @@ class OpenWeatherResponse(val list: List<Data>) : WeatherResponseInterface {
     private fun getExtendedWeatherData(data: Data): ExtendedWeatherData {
         val temperature = (data.main.minTemperature + data.main.maxTemperature) / 2
         val weatherType = getWeatherType(data)
-        val precipProbability = getPrecipProbability(weatherType)
         return ExtendedWeatherData(data.time, temperature, weatherType,
-                data.clouds.all / 100, data.wind.speed, data.main.pressure, data.main.humidity / 100, precipProbability)
+                data.clouds.all/100, data.wind.speed, data.main.pressure, data.main.humidity / 100, getPrecipProbability(weatherType))
     }
 }
 

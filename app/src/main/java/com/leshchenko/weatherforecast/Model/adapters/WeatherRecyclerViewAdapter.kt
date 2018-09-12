@@ -9,10 +9,11 @@ import android.widget.TextView
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.setImageByWeatherType
+import java.text.DateFormat
 import java.util.*
 
 
-class WeatherRecyclerViewAdapter(private val weatherList: List<WeatherData>, private val itemClick: (time: Long) -> Unit) : RecyclerView.Adapter<WeatherViewHolder>() {
+class WeatherRecyclerViewAdapter(var weatherList: List<WeatherData>, private val itemClick: (time: Long) -> Unit) : RecyclerView.Adapter<WeatherViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
         val layout = LayoutInflater.from(parent.context).inflate(R.layout.weather_list_item, parent, false)
         return WeatherViewHolder(layout)
@@ -26,15 +27,17 @@ class WeatherRecyclerViewAdapter(private val weatherList: List<WeatherData>, pri
         val weather = weatherList[position]
         holder.itemView.setOnClickListener { itemClick(weather.time) }
         with(holder) {
-            dateTextView.text = Date(weather.time * 1000).toString()
+
+            dateTextView.text = DateFormat.getDateInstance(DateFormat.LONG).format(Date(weather.time * 1000))
             weatherImage.setImageByWeatherType(weather.weatherType)
             val context = holder.itemView.context
             minTemperatureTextView.text = String.format(context.getString(R.string.temperature), weather.minTemp)
             maxTemperatureTextView.text = String.format(context.getString(R.string.temperature), weather.maxTemp)
-            precipProbabilityTextView.text = String.format(context.getString(R.string.precip_probability), weather.precipProbability)
+            precipProbabilityTextView.text = String.format(context.getString(R.string.precip_probability), "%.1f".format(weather.precipProbability))
         }
     }
 }
+
 
 class WeatherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val dateTextView = view.findViewById<TextView>(R.id.weatherDate)

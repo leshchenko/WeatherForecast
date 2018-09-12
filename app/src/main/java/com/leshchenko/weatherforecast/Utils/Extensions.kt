@@ -2,7 +2,6 @@ package com.leshchenko.weatherforecast.Utils
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.media.Image
 import android.support.annotation.StringRes
 import android.widget.ImageView
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType

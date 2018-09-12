@@ -44,7 +44,7 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
                 }
             }
             return WeatherData(data.first().time, minTempSum / data.size, maxTempSum / data.size, weatherType,
-                    precipProbability / data.size)
+                    (precipProbability / data.size) * 100)
         }
     }
 
@@ -71,7 +71,7 @@ class DarkSkyResponse(val hourly: Hourly, val daily: Daily) : WeatherResponseInt
 
     fun getExtendedWeatherData(data: HourlyData): ExtendedWeatherData {
         return ExtendedWeatherData(data.time, data.temperature, getWeatherType(data.precipType),
-                data.cloudCover, data.windSpeed, data.pressure, data.humidity, data.precipProbability)
+                data.cloudCover, data.windSpeed, data.pressure, data.humidity, (data.precipProbability) * 100)
     }
 
 }

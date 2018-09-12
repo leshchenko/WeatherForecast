@@ -14,11 +14,11 @@
 
     <string name="error_explanation">Something went wrong, please try again</string>
     <string name="image_for_weather">Image for weather</string>
-    <string name="precip_probability">Precip probability %s1 percents</string>
-    <string name="temperature">%s1 C</string>
-    <string name="cloudiness">Cloudiness %s1 percents</string>
-    <string name="humidity">Humidity %s1 percents</string>
-    <string name="pressure">Pressure %s1 hPa</string>
-    <string name="wind_speed">Wind speed %s1 m/s</string>
+    <string name="precip_probability">Precip probability %1$s percents</string>
+    <string name="temperature">%1$s C</string>
+    <string name="cloudiness">Cloudiness %1$s percents</string>
+    <string name="humidity">Humidity %1$s percents</string>
+    <string name="pressure">Pressure %1$s hPa</string>
+    <string name="wind_speed">Wind speed %1$s m/s</string>
 
 </resources>

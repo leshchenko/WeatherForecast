@@ -6,11 +6,13 @@ import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
 import android.support.annotation.StringRes
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherData
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherResponseInterface
 import com.leshchenko.weatherforecast.Model.Interfaces.WeatherType
+import com.leshchenko.weatherforecast.Model.adapters.WeatherRecyclerViewAdapter
 import com.leshchenko.weatherforecast.R
 import com.leshchenko.weatherforecast.Utils.WeatherRepository
 import com.leshchenko.weatherforecast.Utils.SingleLiveEvent
@@ -123,10 +125,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 currentLocation ?: requestLocationEvent.postValue(Any())
                 currentLocation?.let {
                     displayProgressBar()
-                    Log.d("zlo", "request weather")
                     val requestOpenWeatherForecast = WeatherRepository.requestOpenWeatherForecast(it.longitude, it.latitude)
                     val requestDarkSkyForecast = WeatherRepository.requestDarkSkyForecast(it.longitude, it.latitude)
-                    deliverResult(arrayListOf<Any>(requestOpenWeatherForecast, requestDarkSkyForecast))
+                    var requestAccuWeatherForecast = WeatherRepository.requestAccuWeatherForecast(312856)
+                    deliverResult(arrayListOf<Any>(requestOpenWeatherForecast, requestDarkSkyForecast, requestAccuWeatherForecast))
                 }
             }
         }

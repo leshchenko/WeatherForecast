@@ -16,21 +16,15 @@ import com.leshchenko.weatherforecast.Utils.LocationData
 import com.leshchenko.weatherforecast.Utils.PermissionHelper
 import com.leshchenko.weatherforecast.ViewModel.MainActivityViewModel
 import com.leshchenko.weatherforecast.databinding.ActivityMainBinding
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), LocationResultCallback {
-    override fun resolvableApiExceptionHappened(exception: ResolvableApiException) {
-        viewModel.resolvableApiExceptionHappened = true
-        exception.startResolutionForResult(this, LocationData.REQUEST_CHECK_SETTINGS)
+
+    private val weatherAdapter by lazy {
+        WeatherRecyclerViewAdapter(viewModel.weatherForecast, this::weatherItemClick)
     }
 
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
-    }
-
-    override fun transmitLocation(location: Location?) {
-        viewModel.setLocation(location)
-        locationData.onDisable()
     }
 
     val locationData: LocationData  by lazy {
@@ -40,6 +34,8 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        binding.weatherRecyclerView.layoutManager = LinearLayoutManager(baseContext)
+        binding.weatherRecyclerView.adapter = weatherAdapter
         binding.viewModel = viewModel
         setContentView(binding.root)
         viewModel.requestLocationPermissionEvent.observe(this, Observer {
@@ -49,24 +45,19 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
             requestLocation()
         })
         viewModel.displayWeatherEvent.observe(this, Observer {
-            displayWeather()
+            weatherAdapter.notifyDataSetChanged()
         })
         checkLocationPermission()
     }
 
-    private fun displayWeather() {
-        weatherRecyclerView.layoutManager = LinearLayoutManager(baseContext)
-        weatherRecyclerView.adapter = WeatherRecyclerViewAdapter(viewModel.weatherForecast, this::weatherItemClick)
-        weatherRecyclerView.adapter.notifyDataSetChanged()
+    override fun resolvableApiExceptionHappened(exception: ResolvableApiException) {
+        viewModel.resolvableApiExceptionHappened = true
+        exception.startResolutionForResult(this, LocationData.REQUEST_CHECK_SETTINGS)
     }
 
-    private fun weatherItemClick(time: Long) {
-        val intent = Intent(baseContext, DetailsActivity::class.java)
-        intent.putExtra(DetailsActivity.DATE_KEY, time)
-        intent.putExtra(DetailsActivity.LONGITUDE_KEY, viewModel.currentLocation?.longitude)
-        intent.putExtra(DetailsActivity.LATITUDE_KEY, viewModel.currentLocation?.latitude)
-        startActivity(intent)
-        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+    override fun transmitLocation(location: Location?) {
+        viewModel.setLocation(location)
+        locationData.onDisable()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -123,5 +114,14 @@ class MainActivity : AppCompatActivity(), LocationResultCallback {
         } else {
             viewModel.displayLocationPermissionExplanation()
         }
+    }
+
+    private fun weatherItemClick(time: Long) {
+        val intent = Intent(baseContext, DetailsActivity::class.java)
+        intent.putExtra(DetailsActivity.DATE_KEY, time)
+        intent.putExtra(DetailsActivity.LONGITUDE_KEY, viewModel.currentLocation?.longitude)
+        intent.putExtra(DetailsActivity.LATITUDE_KEY, viewModel.currentLocation?.latitude)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 }

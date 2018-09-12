@@ -1,5 +1,7 @@
 package com.leshchenko.weatherforecast.Model.Interfaces
 
+import com.leshchenko.weatherforecast.Model.responses.AccuWeatherLocationResponse
+import com.leshchenko.weatherforecast.Model.responses.AccuWeatherResponse
 import com.leshchenko.weatherforecast.Model.responses.DarkSkyResponse
 import com.leshchenko.weatherforecast.Model.responses.OpenWeatherResponse
 import com.leshchenko.weatherforecast.Utils.WeatherRepository
@@ -20,4 +22,10 @@ interface WeatherService {
     fun getDarkSkyForecast(@Url url: String,
                            @Query("exclude") excludedData: String = "minutely,currently",
                            @Query("units") units: String = "si"): Call<DarkSkyResponse>
+
+    @GET
+    fun getAccuWeatherLocationKey(@Url url: String): Call<AccuWeatherLocationResponse>
+
+    @GET
+    fun getAccuWeatherForecast(@Url url: String): Call<AccuWeatherResponse>
 }
